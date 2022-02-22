@@ -1,0 +1,1 @@
+python train.py --device 3 --batch-size 4 --img-size 480 --data data/pet.yaml --cfg cfg/yolov4.cfg --weights '' --name yolov4 --epochs 200 --multi-scale

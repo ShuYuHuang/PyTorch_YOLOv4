@@ -129,17 +129,11 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
 
     # Resume
     start_epoch, best_fitness = 0, 0.0
-    best_fitness_p, best_fitness_r, best_fitness_ap50, best_fitness_ap, best_fitness_f = 0.0, 0.0, 0.0, 0.0, 0.0
     if pretrained:
         # Optimizer
         if ckpt['optimizer'] is not None:
             optimizer.load_state_dict(ckpt['optimizer'])
             best_fitness = ckpt['best_fitness']
-            best_fitness_p = ckpt['best_fitness_p']
-            best_fitness_r = ckpt['best_fitness_r']
-            best_fitness_ap50 = ckpt['best_fitness_ap50']
-            best_fitness_ap = ckpt['best_fitness_ap']
-            best_fitness_f = ckpt['best_fitness_f']
 
         # Results
         if ckpt.get('training_results') is not None:
@@ -276,7 +270,7 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
 
             # Multi-scale
             if opt.multi_scale:
-                sz = random.randrange(imgsz * 0.5, imgsz * 1.5 + gs) // gs * gs  # size
+                sz = random.randrange(imgsz * 0.75, imgsz * 1.25 + gs) // gs * gs  # size
                 sf = sz / max(imgs.shape[2:])  # scale factor
                 if sf != 1:
                     ns = [math.ceil(x * sf / gs) * gs for x in imgs.shape[2:]]  # new shape (stretched to gs-multiple)
@@ -332,7 +326,7 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
                 ema.update_attr(model)
             final_epoch = epoch + 1 == epochs
             if not opt.notest or final_epoch:  # Calculate mAP
-                if epoch >= 3:
+                if epoch%5==0:
                     results, maps, times = test.test(opt.data,
                                                  batch_size=batch_size*2,
                                                  imgsz=imgsz_test,
@@ -340,7 +334,7 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
                                                  single_cls=opt.single_cls,
                                                  dataloader=testloader,
                                                  save_dir=save_dir,
-                                                 plots=plots and final_epoch,
+                                                 plots=plots,
                                                  log_imgs=opt.log_imgs if wandb else 0)
 
             # Write
@@ -362,26 +356,8 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
 
             # Update best mAP
             fi = fitness(np.array(results).reshape(1, -1))  # weighted combination of [P, R, mAP@.5, mAP@.5-.95]
-            fi_p = fitness_p(np.array(results).reshape(1, -1))  # weighted combination of [P, R, mAP@.5, mAP@.5-.95]
-            fi_r = fitness_r(np.array(results).reshape(1, -1))  # weighted combination of [P, R, mAP@.5, mAP@.5-.95]
-            fi_ap50 = fitness_ap50(np.array(results).reshape(1, -1))  # weighted combination of [P, R, mAP@.5, mAP@.5-.95]
-            fi_ap = fitness_ap(np.array(results).reshape(1, -1))  # weighted combination of [P, R, mAP@.5, mAP@.5-.95]
-            if (fi_p > 0.0) or (fi_r > 0.0):
-                fi_f = fitness_f(np.array(results).reshape(1, -1))  # weighted combination of [P, R, mAP@.5, mAP@.5-.95]
-            else:
-                fi_f = 0.0
             if fi > best_fitness:
                 best_fitness = fi
-            if fi_p > best_fitness_p:
-                best_fitness_p = fi_p
-            if fi_r > best_fitness_r:
-                best_fitness_r = fi_r
-            if fi_ap50 > best_fitness_ap50:
-                best_fitness_ap50 = fi_ap50
-            if fi_ap > best_fitness_ap:
-                best_fitness_ap = fi_ap
-            if fi_f > best_fitness_f:
-                best_fitness_f = fi_f
 
             # Save model
             save = (not opt.nosave) or (final_epoch and not opt.evolve)
@@ -389,11 +365,6 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
                 with open(results_file, 'r') as f:  # create checkpoint
                     ckpt = {'epoch': epoch,
                             'best_fitness': best_fitness,
-                            'best_fitness_p': best_fitness_p,
-                            'best_fitness_r': best_fitness_r,
-                            'best_fitness_ap50': best_fitness_ap50,
-                            'best_fitness_ap': best_fitness_ap,
-                            'best_fitness_f': best_fitness_f,
                             'training_results': f.read(),
                             'model': ema.ema.module.state_dict() if hasattr(ema, 'module') else ema.ema.state_dict(),
                             'optimizer': None if final_epoch else optimizer.state_dict(),
@@ -403,27 +374,9 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
                 torch.save(ckpt, last)
                 if best_fitness == fi:
                     torch.save(ckpt, best)
-                if (best_fitness == fi) and (epoch >= 200):
-                    torch.save(ckpt, wdir / 'best_{:03d}.pt'.format(epoch))
-                if best_fitness == fi:
-                    torch.save(ckpt, wdir / 'best_overall.pt')
-                if best_fitness_p == fi_p:
-                    torch.save(ckpt, wdir / 'best_p.pt')
-                if best_fitness_r == fi_r:
-                    torch.save(ckpt, wdir / 'best_r.pt')
-                if best_fitness_ap50 == fi_ap50:
-                    torch.save(ckpt, wdir / 'best_ap50.pt')
-                if best_fitness_ap == fi_ap:
-                    torch.save(ckpt, wdir / 'best_ap.pt')
-                if best_fitness_f == fi_f:
-                    torch.save(ckpt, wdir / 'best_f.pt')
-                if epoch == 0:
-                    torch.save(ckpt, wdir / 'epoch_{:03d}.pt'.format(epoch))
-                if ((epoch+1) % 25) == 0:
+                if ((epoch+1) % 50) == 0:
                     torch.save(ckpt, wdir / 'epoch_{:03d}.pt'.format(epoch))
                 if epoch >= (epochs-5):
-                    torch.save(ckpt, wdir / 'last_{:03d}.pt'.format(epoch))
-                elif epoch >= 420: 
                     torch.save(ckpt, wdir / 'last_{:03d}.pt'.format(epoch))
                 del ckpt
         # end epoch ----------------------------------------------------------------------------------------------------

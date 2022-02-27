@@ -1,5 +1,5 @@
-train: train/images
-val: valid/images
+train: pet/train/images
+val: pet/valid/images
 
 nc: 2
-names: ['cat', 'dog']
+names: [cat, dog]

@@ -4,3 +4,5 @@ runs/
 train/
 valid/
 wandb/
+datasets/
+pet/

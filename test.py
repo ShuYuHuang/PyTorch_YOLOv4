@@ -219,7 +219,8 @@ def test(data,
             stats.append((correct.cpu(), pred[:, 4].cpu(), pred[:, 5].cpu(), tcls))
 
         # Plot images
-        if plots and batch_i < 3:
+        obj_loss, cls_loss, box_loss = (loss.cpu() / len(dataloader)).tolist()
+        if plots and batch_i < 3 and not (np.isnan(obj_loss) and np.isnan(cls_loss) and np.isnan(box_loss)):
             f = save_dir / f'test_batch{batch_i}_labels.jpg'  # filename
             plot_images(img, targets, paths, f, names)  # labels
             f = save_dir / f'test_batch{batch_i}_pred.jpg'

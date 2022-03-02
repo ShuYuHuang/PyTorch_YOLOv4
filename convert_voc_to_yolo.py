@@ -49,7 +49,7 @@ def convert_annotation(img_path, ann_dir, output_image_path, output_label_path):
         bb = convert((w,h), b)
         out_file.write(str(cls_id) + " " + " ".join([str(a) for a in bb]) + '\n')
         
-classes = ['car']
+classes = ['cat', 'dog']
 train_test_split_rate = 0.2
 
 img_dir = 'datasets/JPEGImages/'

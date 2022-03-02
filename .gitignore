@@ -4,5 +4,10 @@ runs/
 train/
 valid/
 wandb/
-datasets/
+datasets/Annotations
+datasets/ImageSets
+datasets/JPEGImages
+datasets/train
+datasets/valid
+datasets/labelmap.txt
 pet/

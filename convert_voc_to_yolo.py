@@ -52,14 +52,14 @@ def convert_annotation(img_path, ann_dir, output_image_path, output_label_path):
 classes = ['cat', 'dog']
 train_test_split_rate = 0.2
 
-img_dir = 'datasets/JPEGImages/'
-ann_dir = 'datasets/Annotations/'
+img_dir = 'datasets/pet/JPEGImages/'
+ann_dir = 'datasets/pet/Annotations/'
 image_paths = getImagesInDir(img_dir)
 
-train_image_path = 'datasets/train/images/'
-train_label_path = 'datasets/train/labels/'
-valid_image_path = 'datasets/valid/images/'
-valid_label_path = 'datasets/valid/labels/'
+train_image_path = 'datasets/pet/train/images/'
+train_label_path = 'datasets/pet/train/labels/'
+valid_image_path = 'datasets/pet/valid/images/'
+valid_label_path = 'datasets/pet/valid/labels/'
 
 if not os.path.exists(train_image_path):
     os.makedirs(train_image_path)
@@ -73,7 +73,7 @@ if not os.path.exists(valid_label_path):
 train_test_split = len(image_paths)*train_test_split_rate
 
 for i, img_path in enumerate(image_paths):
-    if i > train_test_split:
+    if i >= train_test_split:
         # train
         convert_annotation(img_path, ann_dir, train_image_path, train_label_path)
     else:

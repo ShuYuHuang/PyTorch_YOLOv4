@@ -1,5 +1,6 @@
 import os
 import glob
+import random
 import shutil
 import xml.etree.ElementTree as ET
 

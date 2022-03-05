@@ -1,8 +1,8 @@
 # 物件偵測專班 - YOLOv4 手把手教學
 
-🔥 [YOLOv4_train.ipynb](https://colab.research.google.com/drive/1y_qPO_hR_gHGDesQxWJ8XstmTPbUn0YG?usp=sharing) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1y_qPO_hR_gHGDesQxWJ8XstmTPbUn0YG?usp=sharing)
+🔥 [YOLOv4_train.ipynb](https://colab.research.google.com/drive/1oCH3NHp66S0EO-EId3WOkFRVCFRyIyEt?usp=sharing) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1oCH3NHp66S0EO-EId3WOkFRVCFRyIyEt?usp=sharing)
 
-🔥 [YOLOv4_detect.ipynb](https://colab.research.google.com/drive/1l8K2na7kSZ9rNc5TQEJR_PMDQQXhPukb?usp=sharing) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1l8K2na7kSZ9rNc5TQEJR_PMDQQXhPukb?usp=sharing)
+🔥 [YOLOv4_detect.ipynb](https://colab.research.google.com/drive/1Y5O7dWTxzFPLW162I9Rf8G6vaAznprzb?usp=sharing) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1Y5O7dWTxzFPLW162I9Rf8G6vaAznprzb?usp=sharing)
 
 This is PyTorch implementation of [YOLOv4](https://github.com/AlexeyAB/darknet) which is based on [ultralytics/yolov3](https://github.com/ultralytics/yolov3).
 

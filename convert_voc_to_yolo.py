@@ -55,6 +55,8 @@ train_test_split_rate = 0.2
 img_dir = 'datasets/pet/JPEGImages/'
 ann_dir = 'datasets/pet/Annotations/'
 image_paths = getImagesInDir(img_dir)
+random.seed(2022)
+random.shuffle(image_paths)
 
 train_image_path = 'datasets/pet/train/images/'
 train_label_path = 'datasets/pet/train/labels/'

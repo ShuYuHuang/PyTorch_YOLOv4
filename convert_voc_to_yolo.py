@@ -52,8 +52,8 @@ def convert_annotation(img_path, ann_dir, output_image_path, output_label_path):
 classes = ['cat', 'dog']
 train_test_split_rate = 0.2
 
-img_dir = 'datasets/pet/JPEGImages/'
-ann_dir = 'datasets/pet/Annotations/'
+img_dir = 'datasets/datasets/JPEGImages/'
+ann_dir = 'datasets/datasets/Annotations/'
 image_paths = getImagesInDir(img_dir)
 random.seed(2022)
 random.shuffle(image_paths)

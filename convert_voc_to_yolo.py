@@ -5,9 +5,11 @@ import shutil
 import xml.etree.ElementTree as ET
 
 def getImagesInDir(dir_path):
+    img_formats = ['bmp', 'jpg', 'jpeg', 'png', 'tif', 'tiff', 'dng']  # acceptable image suffixes
     image_list = []
-    for filename in glob.glob(dir_path + '/*.jpg'):
-        image_list.append(filename)
+    for img_format in img_formats:
+        for filename in glob.glob(dir_path + f'/*.{img_format}'):
+            image_list.append(filename)
 
     return image_list
 
@@ -49,20 +51,21 @@ def convert_annotation(img_path, ann_dir, output_image_path, output_label_path):
         b = (float(xmlbox.find('xmin').text), float(xmlbox.find('xmax').text), float(xmlbox.find('ymin').text), float(xmlbox.find('ymax').text))
         bb = convert((w,h), b)
         out_file.write(str(cls_id) + " " + " ".join([str(a) for a in bb]) + '\n')
-        
+
+name = 'pet'
 classes = ['cat', 'dog']
 train_test_split_rate = 0.2
 
-img_dir = 'datasets/datasets/JPEGImages/'
-ann_dir = 'datasets/datasets/Annotations/'
+img_dir = 'datasets/JPEGImages/'
+ann_dir = 'datasets/Annotations/'
 image_paths = getImagesInDir(img_dir)
 random.seed(2022)
 random.shuffle(image_paths)
 
-train_image_path = 'datasets/pet/train/images/'
-train_label_path = 'datasets/pet/train/labels/'
-valid_image_path = 'datasets/pet/valid/images/'
-valid_label_path = 'datasets/pet/valid/labels/'
+train_image_path = f'datasets/{name}/train/images/'
+train_label_path = f'datasets/{name}/train/labels/'
+valid_image_path = f'datasets/{name}/valid/images/'
+valid_label_path = f'datasets/{name}/valid/labels/'
 
 if not os.path.exists(train_image_path):
     os.makedirs(train_image_path)

@@ -120,7 +120,7 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
     if wandb and wandb.run is None:
         opt.hyp = hyp  # add hyperparameters
         wandb_run = wandb.init(config=opt, resume="allow",
-                               project='YOLOv4' if opt.project == 'runs/train' else Path(opt.project).stem,
+                               project='YOLOv4',
                                name=save_dir.stem,
                                id=save_dir.stem)
 

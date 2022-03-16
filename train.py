@@ -218,9 +218,7 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
     logger.info('Image sizes %g train, %g test\n'
                 'Using %g dataloader workers\nLogging results to %s\n'
                 'Starting training for %g epochs...' % (imgsz, imgsz_test, dataloader.num_workers, save_dir, epochs))
-    
-    torch.save(model, wdir / 'init.pt')
-    
+
     for epoch in range(start_epoch, epochs):  # epoch ------------------------------------------------------------------
         model.train()
 
@@ -379,8 +377,8 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
     if rank in [-1, 0]:
         # Strip optimizers
         n = opt.name if opt.name.isnumeric() else ''
-        fresults, flast, fbest = save_dir / f'results{n}.txt', wdir / f'last{n}.pt', wdir / f'best{n}.pt'
-        for f1, f2 in zip([wdir / 'last.pt', wdir / 'best.pt', results_file], [flast, fbest, fresults]):
+        fresults, fbest = save_dir / f'results{n}.txt', save_dir / f'best{n}.pt'
+        for f1, f2 in zip([save_dir / 'best.pt', results_file], [fbest, fresults]):
             if f1.exists():
                 os.rename(f1, f2)  # rename
                 if str(f2).endswith('.pt'):  # is *.pt

@@ -47,10 +47,7 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
         Path(opt.save_dir), opt.epochs, opt.batch_size, opt.total_batch_size, opt.weights, opt.global_rank
 
     # Directories
-    wdir = save_dir / 'weights'
-    wdir.mkdir(parents=True, exist_ok=True)  # make dir
-    last = wdir / 'last.pt'
-    best = wdir / 'best.pt'
+    save_dir.mkdir(parents=True, exist_ok=True)  # make dir
     results_file = save_dir / 'results.txt'
 
     # Save run settings
@@ -125,7 +122,7 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
         wandb_run = wandb.init(config=opt, resume="allow",
                                project='YOLOv4' if opt.project == 'runs/train' else Path(opt.project).stem,
                                name=save_dir.stem,
-                               id=ckpt.get('wandb_id') if 'ckpt' in locals() else None)
+                               id=save_dir.stem)
 
     # Resume
     start_epoch, best_fitness = 0, 0.0
@@ -370,14 +367,11 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
                             'optimizer': None if final_epoch else optimizer.state_dict(),
                             'wandb_id': wandb_run.id if wandb else None}
 
-                # Save last, best and delete
-                torch.save(ckpt, last)
+                # Save best and delete
                 if best_fitness == fi:
-                    torch.save(ckpt, best)
-                if ((epoch+1) % 50) == 0:
-                    torch.save(ckpt, wdir / 'epoch_{:03d}.pt'.format(epoch))
-                if epoch >= (epochs-5):
-                    torch.save(ckpt, wdir / 'last_{:03d}.pt'.format(epoch))
+                    torch.save(ckpt, os.path.join(wandb.run.dir, 'best.pt'))
+                if epoch > epochs*0.5 and ((epoch+1) % 50) == 0:
+                    torch.save(ckpt, os.path.join(wandb.run.dir, 'epoch_{:03d}.pt'.format(epoch)))
                 del ckpt
         # end epoch ----------------------------------------------------------------------------------------------------
     # end training
